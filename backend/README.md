@@ -22,6 +22,9 @@ uvicorn app.main:app --reload --port 8000
 - `GET /api/outliers`
 - `GET /api/charts/distribution`
 - `GET /api/charts/category-summary`
+- `GET /api/sample-csv`
+- `POST /api/upload`
+- `POST /api/chat`
 
 Swagger:
 - `http://localhost:8000/docs`

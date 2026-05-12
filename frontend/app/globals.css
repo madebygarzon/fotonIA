@@ -7,10 +7,46 @@
 }
 
 body {
-  @apply bg-base text-ink;
+  @apply text-ink;
+  background:
+    radial-gradient(1400px 700px at 100% -10%, rgba(19, 111, 99, 0.2), transparent 60%),
+    radial-gradient(900px 500px at 0% 0%, rgba(242, 166, 90, 0.14), transparent 62%),
+    linear-gradient(180deg, #f6f1e8 0%, #f8f7f3 45%, #eef2f6 100%);
   font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
 }
 
 .card {
-  @apply rounded-xl bg-white shadow-sm border border-slate-200;
+  @apply rounded-2xl border border-slate-200/90 bg-white shadow-[0_18px_40px_-30px_rgba(15,23,42,0.6)] backdrop-blur-sm;
+}
+
+.panel-title {
+  @apply text-xl font-semibold tracking-tight text-slate-800;
+}
+
+.table-shell {
+  @apply overflow-x-auto rounded-xl border border-slate-200/80 bg-white/70;
+}
+
+.table-core {
+  @apply min-w-full text-sm;
+}
+
+.table-core thead tr {
+  @apply bg-slate-50 text-left;
+}
+
+.table-core th {
+  @apply px-3 py-3 text-[11px] font-semibold uppercase tracking-wide text-slate-500;
+}
+
+.table-core td {
+  @apply px-3 py-3 text-slate-700;
+}
+
+.table-core tbody tr {
+  @apply border-t border-slate-100;
+}
+
+.table-core tbody tr:hover {
+  @apply bg-emerald-50/40;
 }

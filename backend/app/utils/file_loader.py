@@ -1,9 +1,11 @@
 from pathlib import Path
 from typing import Final
+from io import StringIO
 
 import pandas as pd
 
 PROJECT_ROOT: Final[Path] = Path(__file__).resolve().parents[3]
+RAW_DATASET_PATH: Final[Path] = PROJECT_ROOT / "data" / "raw" / "dataset.csv"
 PROCESSED_DATASET_PATH: Final[Path] = PROJECT_ROOT / "data" / "processed" / "dataset_clean.csv"
 
 
@@ -96,3 +98,53 @@ def load_dataset() -> pd.DataFrame:
     """Load the processed dataset, creating a sample file when needed."""
     dataset_path = ensure_processed_dataset()
     return pd.read_csv(dataset_path)
+
+
+def _normalize_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """Normalize column names for consistent downstream analysis."""
+    normalized = df.copy()
+    normalized.columns = (
+        normalized.columns.str.strip()
+        .str.lower()
+        .str.replace(" ", "_", regex=False)
+        .str.replace("-", "_", regex=False)
+    )
+    return normalized
+
+
+def _basic_cleaning(df: pd.DataFrame) -> pd.DataFrame:
+    """Apply minimal cleaning to keep the MVP robust and readable."""
+    cleaned = _normalize_columns(df)
+    cleaned = cleaned.drop_duplicates().reset_index(drop=True)
+
+    numeric_columns = cleaned.select_dtypes(include=["number"]).columns
+    for col in numeric_columns:
+        cleaned[col] = cleaned[col].fillna(cleaned[col].median())
+
+    categorical_columns = cleaned.select_dtypes(exclude=["number"]).columns
+    for col in categorical_columns:
+        if cleaned[col].isna().any():
+            mode_values = cleaned[col].mode(dropna=True)
+            if not mode_values.empty:
+                cleaned[col] = cleaned[col].fillna(mode_values.iloc[0])
+
+    return cleaned
+
+
+def save_uploaded_csv(csv_bytes: bytes) -> dict[str, int]:
+    """Save uploaded CSV into raw data and export a cleaned processed version."""
+    raw_text = csv_bytes.decode("utf-8")
+    raw_df = pd.read_csv(StringIO(raw_text))
+
+    if raw_df.empty:
+        raise ValueError("Uploaded CSV is empty.")
+
+    RAW_DATASET_PATH.parent.mkdir(parents=True, exist_ok=True)
+    PROCESSED_DATASET_PATH.parent.mkdir(parents=True, exist_ok=True)
+
+    raw_df.to_csv(RAW_DATASET_PATH, index=False)
+
+    clean_df = _basic_cleaning(raw_df)
+    clean_df.to_csv(PROCESSED_DATASET_PATH, index=False)
+
+    return {"rows": int(clean_df.shape[0]), "columns": int(clean_df.shape[1])}

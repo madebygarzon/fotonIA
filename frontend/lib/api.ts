@@ -1,5 +1,6 @@
 import {
   CategorySummaryResponse,
+  ChatResponse,
   CorrelationsResponse,
   DataQualityResponse,
   DescriptiveStatsResponse,
@@ -25,5 +26,35 @@ export const api = {
   getCorrelations: () => fetchJson<CorrelationsResponse>("/api/correlations"),
   getOutliers: () => fetchJson<OutliersResponse>("/api/outliers"),
   getDistribution: () => fetchJson<DistributionResponse>("/api/charts/distribution"),
-  getCategorySummary: () => fetchJson<CategorySummaryResponse>("/api/charts/category-summary")
+  getCategorySummary: () => fetchJson<CategorySummaryResponse>("/api/charts/category-summary"),
+  uploadDataset: async (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const response = await fetch(`${API_BASE_URL}/api/upload`, {
+      method: "POST",
+      body: formData
+    });
+
+    if (!response.ok) {
+      throw new Error(`Upload failed: ${response.status}`);
+    }
+
+    return response.json() as Promise<{ message: string; rows: number; columns: number }>;
+  },
+  askChat: async (question: string) => {
+    const response = await fetch(`${API_BASE_URL}/api/chat`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ question })
+    });
+
+    if (!response.ok) {
+      throw new Error(`Chat request failed: ${response.status}`);
+    }
+
+    return response.json() as Promise<ChatResponse>;
+  },
 };

@@ -81,3 +81,8 @@ export interface CategorySummaryResponse {
   metric?: string;
   summary: CategorySummaryItem[];
 }
+
+export interface ChatResponse {
+  answer: string;
+  sources: string[];
+}
