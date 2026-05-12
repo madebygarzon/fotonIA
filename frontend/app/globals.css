@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  @apply bg-base text-ink;
+  font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+}
+
+.card {
+  @apply rounded-xl bg-white shadow-sm border border-slate-200;
+}
