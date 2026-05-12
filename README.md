@@ -102,3 +102,14 @@ npm run dev
 3. El notebook exporta el dataset limpio a `data/processed/dataset_clean.csv`.
 4. FastAPI lee `dataset_clean.csv` (o crea un dataset de ejemplo automáticamente).
 5. Next.js consume los endpoints de FastAPI y renderiza el dashboard exploratorio.
+
+---
+## Autor
+
+- Creado por **Carlos Garzón**
+- Software Engineer, Fullstack Developer.
+---
+
+## Licencia
+
+MIT
